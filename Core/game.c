@@ -5,16 +5,21 @@ SDL_Renderer* renderer = NULL;
 
 int SDLInitialization()
 {
-	SDL_Init(SDL_INIT_VIDEO);
 
-	SDL_CreateWindowAndRenderer("Life Game", WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_KEYBOARD_GRABBED | SDL_WINDOW_MOUSE_FOCUS, &window, &renderer);
+	if (SDL_Init(SDL_INIT_EVENTS) < 0)
+	{
+		SDL_Log("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
+		return 1;
+	}
+
+	window = SDL_CreateWindow("Life Game", WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_MOUSE_FOCUS | SDL_WINDOW_RESIZABLE);
 
 	if (window == NULL)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Could not create window: %s\n", SDL_GetError());
 		return 1;
 	}
-
+	renderer = SDL_CreateRenderer(window, NULL, 0);
 	if (renderer == NULL)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Could not create renderer: %s\n", SDL_GetError());
@@ -29,16 +34,16 @@ int GridInitialization(int matrix[][GRID_HEIGHT])
 	{
 		for (int column = 0; column < GRID_HEIGHT; column++)
 		{
-			matrix[row][column] = 0;
-
+			matrix[row][column] = DEAD_CELL;
 		}
 	}
+	return 0;
 }
-void HandleQuitEvent(SDL_Event event, bool done)
+void HandleQuitEvent(SDL_Event event, bool* done)
 {
 	if (event.type == SDL_EVENT_QUIT)
 	{
-		done = true;
+		*done = true;
 	}
 
 }
@@ -54,7 +59,6 @@ void GridUpdate(int matrix[][GRID_HEIGHT])
 		}
 	}
 }
-
 int CountLiveNeighbors(int matrix[][GRID_HEIGHT], int row, int col)
 {
 	int liveNeighborCount = 0;
@@ -74,6 +78,7 @@ int CountLiveNeighbors(int matrix[][GRID_HEIGHT], int row, int col)
 			}
 		}
 	}
+
 }
 
 bool IsAlive(int matrix[][GRID_HEIGHT], int row, int col)
@@ -86,6 +91,7 @@ bool IsAlive(int matrix[][GRID_HEIGHT], int row, int col)
 
 int AllocateMatrix()
 {
+	return 0;
 }
 
 
@@ -101,10 +107,11 @@ int GetNextGridState(int matrix[][GRID_HEIGHT], int liveNeighbours, int row, int
 	{
 		matrix[row][col] = liveNeighbours == 3 ? LIVE_CELL : DEAD_CELL;
 	}
+	return 0;
 }
 
 //
-void printMatrix(int matrix[][GRID_HEIGHT])
+void printMatrix(int matrix[GRID_WIDTH][GRID_HEIGHT])
 {
 	/*ONLY FOR TEST PURPOSES IN THE GAME.C FILE*/
 	printf("______________________________________________\n");
@@ -116,6 +123,34 @@ void printMatrix(int matrix[][GRID_HEIGHT])
 		printf("\n");
 	}
 }
+
+void displayMatrix(int matrix[][GRID_HEIGHT], SDL_Renderer* renderer, int row, int column)
+{
+	SDL_FRect cell = { column * (CELL_SIZE_X + PADDING), row * (CELL_SIZE_Y + PADDING), CELL_SIZE_X, CELL_SIZE_Y };
+
+	if (matrix[row][column] == DEAD_CELL)
+	{
+		SDL_SetRenderDrawColor(renderer, 255, 182, 193, 255);
+	}
+	else if (matrix[row][column] == LIVE_CELL)
+	{
+		SDL_SetRenderDrawColor(renderer, 79, 115, 71, 255);
+	}
+	SDL_RenderFillRect(renderer, &cell);
+	SDL_RenderRect(renderer, &cell);
+}
+
+void RenderMatrix(SDL_Renderer* renderer, int matrix[][GRID_HEIGHT])
+{
+	for (int row = 0; row < GRID_HEIGHT; ++row)
+	{
+		for (int column = 0; column < GRID_WIDTH; ++column)
+		{
+			displayMatrix(matrix, renderer, row, column);
+		}
+	}
+}
+
 //
 //int placingCells(int** matrix) {
 //	//just read ^^

@@ -60,7 +60,7 @@ void RenderDrawGrid(SDL_Renderer* renderer)
 
 			SDL_FRect rect = { x, y, GRID_CELL_SIZE, GRID_CELL_SIZE };
 			SDL_SetRenderDrawColor(renderer, 255, 105, 180, 255);
-			SDL_RenderFillRect(renderer, &rect);
+			//SDL_RenderDrawRectF(renderer, &rect);
 		}
 	}
 }
