@@ -32,10 +32,11 @@ int main(int argc, char* argv[]) {
     {
         GridUpdate(matrix, renderer);
         SDL_Event event;
-
+ 
         while (SDL_PollEvent(&event))
         {
             HandleQuitEvent(event, &done);
+            GetMousePosition(event, matrix);
         }
 
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);

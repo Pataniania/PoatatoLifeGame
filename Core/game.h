@@ -7,7 +7,7 @@
 #include <stdio.h>
 
 #define WINDOW_WIDTH 1080
-#define WINDOW_HEIGHT 900
+#define WINDOW_HEIGHT 720
 
 #define GRID_WIDTH 100
 #define GRID_HEIGHT 100
@@ -17,8 +17,8 @@
 
 #define PADDING 1.f
 
-#define CELL_SIZE_X ((float)(WINDOW_WIDTH - (GRID_WIDTH + 1) * PADDING) / GRID_WIDTH)
-#define CELL_SIZE_Y ((float)(WINDOW_HEIGHT - (GRID_HEIGHT + 1) * PADDING) / GRID_HEIGHT)
+#define CELL_SIZE_X ((float)(WINDOW_WIDTH - (GRID_WIDTH + 1) * PADDING) / (float)GRID_WIDTH)
+#define CELL_SIZE_Y ((float)(WINDOW_HEIGHT - (GRID_HEIGHT + 1) * PADDING) / (float)GRID_HEIGHT)
 
 typedef struct GameArray
 {
@@ -44,6 +44,12 @@ void printMatrix(int matrix[GRID_WIDTH][GRID_HEIGHT]);
 void displayMatrix(int matrix[][GRID_HEIGHT], SDL_Renderer* renderer, int row, int column);
 
 void RenderMatrix(SDL_Renderer* renderer, int matrix[][GRID_HEIGHT]);
+
+void GetMousePosition(SDL_Event event, int matrix[][GRID_HEIGHT]);
+
+
+bool PointInFRect(float px, float py, SDL_FRect* rect);
+void PlacingCell(int x, int y);
 //int placingCells(int** matrix);
 //int updateManager(int** matrix);
 //void checkForNeighbors(int** matrix);

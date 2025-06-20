@@ -86,11 +86,3 @@ int draw_grid(SDL_Renderer* renderer) {
 	return 0;
 }
 
-int draw_cursor(SDL_Renderer* renderer) {
-	// Draw grid cursor.
-	SDL_SetRenderDrawColor(renderer, grid_cursor_color.r,
-		grid_cursor_color.g, grid_cursor_color.b,
-		grid_cursor_color.a);
-	SDL_RenderFillRect(renderer, &grid_cursor);
-	return 0;
-}

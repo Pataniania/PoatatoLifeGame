@@ -150,6 +150,49 @@ void RenderMatrix(SDL_Renderer* renderer, int matrix[][GRID_HEIGHT])
 		}
 	}
 }
+void GetMousePosition(SDL_Event event, int matrix[][GRID_HEIGHT])
+{
+
+	
+	if (event.type == SDL_EVENT_MOUSE_BUTTON_DOWN)
+	{
+
+
+		float mouseX = -1;
+		float mouseY = -1;
+
+		SDL_GetMouseState(&mouseX, &mouseY);
+
+		printf("Raw mouse coordinates %f:%f \n", mouseX, mouseY);
+
+
+
+		int cellRow = (int)(mouseY / (CELL_SIZE_Y + PADDING));
+		int cellCol = (int)(mouseX / (CELL_SIZE_X + PADDING));
+
+		printf("Grid coordinates %d:%d \n", cellRow, cellCol);
+
+
+		if (cellCol >= 0 && cellCol < WINDOW_HEIGHT &&
+			cellRow >= 0 && cellRow < WINDOW_WIDTH)
+		{
+			matrix[cellRow][cellCol] = !matrix[cellRow][cellCol];
+			printf("Cell placed or removed");
+		}
+
+
+		/*printf("Raw mouse coordinates %f:%f \n", x, y);
+
+		int cellRow = (x - PADDING) / (CELL_SIZE_X + PADDING);
+		int cellCol = (y - PADDING) / (CELL_SIZE_Y + PADDING);
+
+		printf("Grid coordinates %d:%d \n", cellRow, cellCol);
+
+		}*/
+
+	}
+}
+
 
 //
 //int placingCells(int** matrix) {
