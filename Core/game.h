@@ -2,51 +2,38 @@
 
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_render.h>
-
-
 #include <stdio.h>
+#include <stdlib.h>
 
 #define WINDOW_WIDTH 1080
 #define WINDOW_HEIGHT 720
 
-#define GRID_WIDTH 100
-#define GRID_HEIGHT 100
+#define GRID_ROWS 100
+#define GRID_COLS 75
 
 #define DEAD_CELL 0
 #define LIVE_CELL 1
 
 #define PADDING 1.f
 
-#define CELL_SIZE_X ((float)(WINDOW_WIDTH - (GRID_WIDTH + 1) * PADDING) / (float)GRID_WIDTH)
-#define CELL_SIZE_Y ((float)(WINDOW_HEIGHT - (GRID_HEIGHT + 1) * PADDING) / (float)GRID_HEIGHT)
+#define CELL_SIZE_X ((float)(WINDOW_WIDTH - (GRID_ROWS + 1) * PADDING) / (float)GRID_ROWS)
+#define CELL_SIZE_Y ((float)(WINDOW_HEIGHT - (GRID_COLS + 1) * PADDING) / (float)GRID_COLS)
+
+#define INDEX(r, c) ((r) * GRID_COLS + (c))
 
 int SDLInitialization();
-
-int GridInitialization(int matrix[][GRID_WIDTH]);
+void GridInitialization(uint8_t* matrix);
 void HandleQuitEvent(SDL_Event event, bool* done);
-
- void GridUpdate(int matrix[][GRID_WIDTH]);
-
-int CountLiveNeighbors(int matrix[][GRID_WIDTH], int row, int col);
-
-bool IsAlive(int matrix[][GRID_WIDTH], int row, int col);
-void printMatrix(int matrix[GRID_HEIGHT][GRID_WIDTH]);
-
-void displayMatrix(int matrix[][GRID_WIDTH], SDL_Renderer* renderer, int row, int column);
-
-void RenderMatrix(SDL_Renderer* renderer, int matrix[][GRID_WIDTH]);
-
-void GetMousePosition(SDL_Event event, int matrix[][GRID_WIDTH]);
-
-void HandleKeyPress(SDL_Event event, int matrix[][GRID_WIDTH]);
-//int placingCells(int** matrix);
-//int updateManager(int** matrix);
-//void checkForNeighbors(int** matrix);
-//void updateMatrix(int** matrix);
-
+void GridUpdate(uint8_t* matrix, uint8_t* previous);
+int CountLiveNeighbors(uint8_t* matrix, int row, int col);
+bool IsAlive(uint8_t* matrix, int row, int col);
+void printMatrix(uint8_t* matrix);
+void displayMatrix(uint8_t* matrix, SDL_Renderer* renderer, int row, int column);
+void RenderMatrix(SDL_Renderer* renderer, uint8_t* matrix);
+void GetMousePosition(SDL_Event event, uint8_t* matrix);
+void HandleKeyPress(SDL_Event event, uint8_t* matrix, uint8_t* previous, bool* toggleUpdate);
+int GetNextGridState(int currentCell, int liveNeighbours);
 
 extern SDL_Window* window;
 extern SDL_Renderer* renderer;
-int gameArr[GRID_WIDTH][GRID_HEIGHT];
-extern int nextMatrix[GRID_WIDTH][GRID_HEIGHT];
 

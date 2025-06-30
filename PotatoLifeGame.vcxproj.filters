@@ -18,13 +18,7 @@
     <ClCompile Include="Core\main.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Core\grid.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Core\game.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Core\cell.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -284,16 +278,7 @@
     <ClInclude Include="SDL3\SDL_video.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Core\grid.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\constants.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Core\game.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\cell.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -27,17 +27,16 @@ int SDLInitialization()
 	}
 	return 0;
 }
-
-int GridInitialization(int matrix[][GRID_HEIGHT])
+void GridInitialization(uint8_t* matrix)
 {
-	for (int row = 0; row < GRID_WIDTH; row++)
+
+	for (int row = 0; row < GRID_ROWS; row++)
 	{
-		for (int column = 0; column < GRID_HEIGHT; column++)
+		for (int column = 0; column < GRID_COLS; column++)
 		{
-			matrix[row][column] = DEAD_CELL;
+			matrix[INDEX(row, column)] = DEAD_CELL;
 		}
 	}
-	return 0;
 }
 void HandleQuitEvent(SDL_Event event, bool* done)
 {
@@ -47,10 +46,8 @@ void HandleQuitEvent(SDL_Event event, bool* done)
 	}
 
 }
-
-void GridUpdate(int matrix[][GRID_HEIGHT])
+void GridUpdate(uint8_t* matrix, uint8_t* previous)
 {
-	int(*previous)[GRID_HEIGHT] = malloc(sizeof(int) * GRID_WIDTH * GRID_HEIGHT);
 
 	if (!previous)
 	{
@@ -59,25 +56,22 @@ void GridUpdate(int matrix[][GRID_HEIGHT])
 	}
 
 	// Copy current state
-	for (int row = 0; row < GRID_WIDTH; ++row)
-		for (int col = 0; col < GRID_HEIGHT; ++col)
-			previous[row][col] = matrix[row][col];
+	for (int row = 0; row < GRID_ROWS; ++row)
+		for (int col = 0; col < GRID_COLS; ++col)
+			previous[INDEX(row, col)] = matrix[INDEX(row, col)];
 
 	// Update matrix based on previous state
-	for (int row = 0; row < GRID_WIDTH; row++)
+	for (int row = 0; row < GRID_ROWS; row++)
 	{
-		for (int col = 0; col < GRID_HEIGHT; col++)
+		for (int col = 0; col < GRID_COLS; col++)
 		{
 			int liveNeighboursCount = CountLiveNeighbors(previous, row, col);
 			// You should assign the returned cell state to matrix[row][col]
-			matrix[row][col] = GetNextGridState(previous[row][col], liveNeighboursCount);
+			matrix[INDEX(row, col)] = GetNextGridState(previous[INDEX(row, col)], liveNeighboursCount);
 		}
 	}
-
-	free(previous);
 }
-
-int CountLiveNeighbors(int matrix[][GRID_HEIGHT], int row, int col)
+int CountLiveNeighbors(uint8_t* matrix, int row, int col)
 {
 	int liveNeighborCount = 0;
 
@@ -97,53 +91,48 @@ int CountLiveNeighbors(int matrix[][GRID_HEIGHT], int row, int col)
 	}
 	return liveNeighborCount;
 }
-
-bool IsAlive(int matrix[][GRID_HEIGHT], int row, int col)
+bool IsAlive(uint8_t* matrix, int row, int col)
 {
-	return row >= 0 && row < GRID_WIDTH && col >= 0 && col < GRID_HEIGHT && matrix[row][col] == LIVE_CELL;
+	return row >= 0 && row < GRID_ROWS && col >= 0 && col < GRID_COLS && matrix[INDEX(row, col)] == LIVE_CELL;
 }
-
-void printMatrix(int matrix[GRID_HEIGHT][GRID_HEIGHT])
+void printMatrix(uint8_t* matrix)
 {
 	/*ONLY FOR TEST PURPOSES IN THE GAME.C FILE*/
 	printf("______________________________________________\n");
 
-	for (int row = 0; row < GRID_HEIGHT; row++) {
-		for (int column = 0; column < GRID_WIDTH; column++) {
-			printf("%d ", matrix[row][column]);
+	for (int row = 0; row < GRID_COLS; row++) {
+		for (int column = 0; column < GRID_ROWS; column++) {
+			printf("%d ", matrix[INDEX(row, column)]);
 		}
 		printf("\n");
 	}
 }
-
-void displayMatrix(int matrix[][GRID_HEIGHT], SDL_Renderer* renderer, int row, int column)
+void displayMatrix(uint8_t* matrix, SDL_Renderer* renderer, int row, int column)
 {
 	SDL_FRect cell = { column * (CELL_SIZE_X + PADDING), row * (CELL_SIZE_Y + PADDING), CELL_SIZE_X, CELL_SIZE_Y };
 
-	if (matrix[row][column] == DEAD_CELL)
+	if (matrix[INDEX(row, column)] == DEAD_CELL)
 	{
-		SDL_SetRenderDrawColor(renderer, 255, 182, 193, 255);
+		SDL_SetRenderDrawColor(renderer, 64, 64, 64, 255);
 	}
-	else if (matrix[row][column] == LIVE_CELL)
+	else if (matrix[INDEX(row, column)] == LIVE_CELL)
 	{
-		SDL_SetRenderDrawColor(renderer, 79, 115, 71, 255);
+		SDL_SetRenderDrawColor(renderer, 115, 115, 115, 255);
 	}
 	SDL_RenderFillRect(renderer, &cell);
 	SDL_RenderRect(renderer, &cell);
 }
-
-void RenderMatrix(SDL_Renderer* renderer, int matrix[][GRID_HEIGHT])
+void RenderMatrix(SDL_Renderer* renderer, uint8_t* matrix)
 {
-	for (int row = 0; row < GRID_WIDTH; ++row)
+	for (int row = 0; row < GRID_ROWS; ++row)
 	{
-		for (int col = 0; col < GRID_HEIGHT; ++col)
+		for (int col = 0; col < GRID_COLS; ++col)
 		{
 			displayMatrix(matrix, renderer, row, col);
 		}
 	}
 }
-
-void GetMousePosition(SDL_Event event, int matrix[][GRID_HEIGHT])
+void GetMousePosition(SDL_Event event, uint8_t* matrix)
 {
 
 	if (event.type == SDL_EVENT_MOUSE_BUTTON_DOWN)
@@ -162,10 +151,10 @@ void GetMousePosition(SDL_Event event, int matrix[][GRID_HEIGHT])
 		printf("Grid coordinates %d:%d \n", cellRow, cellCol);
 
 
-		if (cellRow >= 0 && cellRow < GRID_WIDTH &&
-			cellCol >= 0 && cellCol < GRID_HEIGHT)
+		if (cellRow >= 0 && cellRow < GRID_ROWS &&
+			cellCol >= 0 && cellCol < GRID_COLS)
 		{
-			matrix[cellRow][cellCol] = !matrix[cellRow][cellCol];
+			matrix[INDEX(cellRow, cellCol)] = !matrix[INDEX(cellRow, cellCol)];
 		}
 		/*printf("Raw mouse coordinates %f:%f \n", x, y);
 
@@ -178,22 +167,35 @@ void GetMousePosition(SDL_Event event, int matrix[][GRID_HEIGHT])
 
 	}
 }
-
-void HandleKeyPress(SDL_Event event, int matrix[][GRID_HEIGHT])
+void HandleKeyPress(SDL_Event event, uint8_t* matrix, uint8_t* previous, bool* toggleUpdate)
 {
-	if (event.type == SDL_EVENT_KEY_DOWN)
+
+	if (event.type == SDL_EVENT_KEY_DOWN && event.key.repeat == 0)
 	{
+		if (event.key.key == SDLK_U)
+		{
+			GridUpdate(matrix, previous);
+		}
+
+		if (event.key.key == SDLK_R)
+		{
+			for (int i = 0; i < 30; i++)
+			{
+				matrix[INDEX(rand() % GRID_COLS + 1, rand() % GRID_ROWS + 1)] = LIVE_CELL;
+			}
+		}
+		if (event.key.key == SDLK_C)
+		{
+			GridInitialization(matrix);
+		}
+
 		if (event.key.key == SDLK_SPACE)
 		{
-			printf("\nSimulation started\n");
-			GridUpdate(matrix);
+			*toggleUpdate = !(*toggleUpdate);
 		}
+
 	}
 }
-
-
-
-
 int GetNextGridState(int currentCell, int liveNeighbours)
 {
 	if (currentCell == LIVE_CELL)
@@ -207,74 +209,3 @@ int GetNextGridState(int currentCell, int liveNeighbours)
 }
 
 
-
-//
-//int placingCells(int** matrix) {
-//	//just read ^^
-//
-//	SDL_Event event;
-//
-//	int xMouse;
-//	int yMouse;
-//
-//	SDL_GetMouseState(&xMouse, &yMouse);
-//
-//	int rowGridY = yMouse / GRID_CELL_SIZE;
-//	int rowGridX = xMouse / GRID_CELL_SIZE;
-//
-//
-//
-//	while (SDL_PollEvent(&event) > 0) {
-//		switch (event.type) {
-//
-//		case SDL_EVENT_MOUSE_BUTTON_DOWN:
-//			for (int row = 0; row < GRID_HEIGHT; row++) {
-//				for (int column = 0; column < GRID_WIDTH; column++) {
-//					matrix[rowGridY][rowGridX] = 1;
-//
-//					if (matrix[rowGridY][rowGridX] == 1) {
-//						matrix[rowGridY][rowGridX] = 0;
-//
-//						printf("clicked on cel\n");
-//					}
-//				}
-//			}
-//
-//
-//			printMatrix(matrix);
-//
-//			break;
-//		}
-//	}
-//	return 0;
-//}
-//
-//int updateManager(int** matrix) {
-//	//Toggle update
-//	const Uint8* state = SDL_GetKeyboardState(NULL);
-//
-//	if (state[SDL_SCANCODE_SPACE] && !lastKeyState) {
-//		keyToggled = !keyToggled;
-//		printf("Key toggled %d\n", keyToggled);
-//
-//	}
-//	if (keyToggled) {
-//		updateMatrix(matrix);
-//
-//	}
-//	lastKeyState = state[SDL_SCANCODE_SPACE];
-//	//Update by frame
-//	if (state[SDL_SCANCODE_U]) {
-//		updateMatrix(matrix);
-//	}
-//	return 0;
-//}
-
-//void updateMatrix(int** matrix) {
-//	checkForNeighbors(matrix);
-//
-//	generation += 1;
-//	printf("Generation %d \n", generation);
-//	printf("The matrix was updated ");
-//
-//}
