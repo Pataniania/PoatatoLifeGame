@@ -20,19 +20,12 @@
 #define CELL_SIZE_X ((float)(WINDOW_WIDTH - (GRID_WIDTH + 1) * PADDING) / (float)GRID_WIDTH)
 #define CELL_SIZE_Y ((float)(WINDOW_HEIGHT - (GRID_HEIGHT + 1) * PADDING) / (float)GRID_HEIGHT)
 
-typedef struct GameArray
-{
-	int** matrix[GRID_WIDTH][GRID_HEIGHT];
-
-}GameArray;
-
-
 int SDLInitialization();
 
 int GridInitialization(int matrix[][GRID_WIDTH]);
 void HandleQuitEvent(SDL_Event event, bool* done);
 
-void GridUpdate(int matrix[][GRID_WIDTH]);
+ void GridUpdate(int matrix[][GRID_WIDTH]);
 
 int CountLiveNeighbors(int matrix[][GRID_WIDTH], int row, int col);
 
@@ -56,5 +49,4 @@ extern SDL_Window* window;
 extern SDL_Renderer* renderer;
 int gameArr[GRID_WIDTH][GRID_HEIGHT];
 extern int nextMatrix[GRID_WIDTH][GRID_HEIGHT];
-extern GameArray* gameArray;
 
