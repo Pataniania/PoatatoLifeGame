@@ -231,7 +231,10 @@
     <ClInclude Include="SDL3\SDL_vulkan.h" />
   </ItemGroup>
   <ItemGroup>
-    <Font Include="x64\Debug\Minecraft.ttf" />
+    <Font Include="x64\Debug\DroidSansMono.ttf" />
+    <Font Include="x64\Debug\Minecraft.ttf">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </Font>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

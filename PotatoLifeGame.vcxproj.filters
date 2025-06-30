@@ -284,5 +284,6 @@
   </ItemGroup>
   <ItemGroup>
     <Font Include="x64\Debug\Minecraft.ttf" />
+    <Font Include="x64\Debug\DroidSansMono.ttf" />
   </ItemGroup>
 </Project>

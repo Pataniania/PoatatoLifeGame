@@ -2,7 +2,6 @@
 
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
-TTF_Font* font = NULL;
 
 bool SDLInitialization()
 {
@@ -31,8 +30,7 @@ bool SDLInitialization()
 	{
 		SDL_Log("SDL_ttf could not initialize! SDL_ttf error: %s\n", SDL_GetError());
 	}
-
-	font = TTF_OpenFont("Assets\Fonts\Minecraft.ttf",24);
+	TTF_Font* font = TTF_OpenFont("Minecraft.ttf", 24);
 
 	if (!font)
 	{
