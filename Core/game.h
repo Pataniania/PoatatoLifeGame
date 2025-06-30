@@ -2,6 +2,8 @@
 
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_render.h>
+#include <SDL3_ttf/SDL_ttf.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -21,7 +23,8 @@
 
 #define INDEX(r, c) ((r) * GRID_COLS + (c))
 
-int SDLInitialization();
+bool SDLInitialization();
+
 void GridInitialization(uint8_t* matrix);
 void HandleQuitEvent(SDL_Event event, bool* done);
 void GridUpdate(uint8_t* matrix, uint8_t* previous);
@@ -36,4 +39,5 @@ int GetNextGridState(int currentCell, int liveNeighbours);
 
 extern SDL_Window* window;
 extern SDL_Renderer* renderer;
+extern TTF_Font* font;
 

@@ -26,7 +26,7 @@ int main(int argc, char* argv[])
         return -1;
     }
 
-    if (SDLInitialization() != 0)
+    if (!SDLInitialization())
     {
         return -1;
     }

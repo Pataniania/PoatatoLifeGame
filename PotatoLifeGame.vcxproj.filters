@@ -282,4 +282,7 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <Font Include="x64\Debug\Minecraft.ttf" />
+  </ItemGroup>
 </Project>
