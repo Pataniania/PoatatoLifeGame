@@ -28,7 +28,7 @@ int SDLInitialization()
 	return 0;
 }
 
-int GridInitialization(int matrix[][GRID_HEIGHT])
+int GridInitialization(int matrix[][GRID_WIDTH])
 {
 	for (int row = 0; row < GRID_WIDTH; row++)
 	{
@@ -48,18 +48,26 @@ void HandleQuitEvent(SDL_Event event, bool* done)
 
 }
 
-void GridUpdate(int matrix[][GRID_HEIGHT])
+void GridUpdate(int matrix[][GRID_WIDTH])
 {
+	int previous[GRID_WIDTH][GRID_HEIGHT];
+
+	for (int row = 0; row < GRID_WIDTH; ++row)
+		for (int col = 0; col < GRID_HEIGHT; ++col)
+			previous[row][col] = matrix[row][col];
+		
+
 	for (int row = 0; row < GRID_WIDTH; row++)
 	{
 		for (int column = 0; column < GRID_HEIGHT; column++)
 		{
-			int liveNeighboursCount = CountLiveNeighbors(gameArr, row, column);
-			GetNextGridState(matrix, liveNeighboursCount, row, column);
+			int liveNeighboursCount = CountLiveNeighbors(previous, row, column);
+			matrix = GetNextGridState(previous[row][column], liveNeighboursCount, row, column);;
 		}
 	}
 }
-int CountLiveNeighbors(int matrix[][GRID_HEIGHT], int row, int col)
+
+int CountLiveNeighbors(int matrix[][GRID_WIDTH], int row, int col)
 {
 	int liveNeighborCount = 0;
 
@@ -74,14 +82,14 @@ int CountLiveNeighbors(int matrix[][GRID_HEIGHT], int row, int col)
 
 			if (IsAlive(matrix, neighborRow, neighborCol))
 			{
-				return liveNeighborCount++;
+				liveNeighborCount++;
 			}
 		}
 	}
-
+	return;
 }
 
-bool IsAlive(int matrix[][GRID_HEIGHT], int row, int col)
+bool IsAlive(int matrix[][GRID_WIDTH], int row, int col)
 {
 	return
 		row >= 0 && row < GRID_HEIGHT && col >= 0 && col < GRID_WIDTH
@@ -89,10 +97,103 @@ bool IsAlive(int matrix[][GRID_HEIGHT], int row, int col)
 		matrix[row][col] == 1;
 }
 
-int AllocateMatrix()
+void printMatrix(int matrix[GRID_HEIGHT][GRID_WIDTH])
 {
-	return 0;
+	/*ONLY FOR TEST PURPOSES IN THE GAME.C FILE*/
+	printf("______________________________________________\n");
+
+	for (int row = 0; row < GRID_HEIGHT; row++) {
+		for (int column = 0; column < GRID_WIDTH; column++) {
+			printf("%d ", matrix[row][column]);
+		}
+		printf("\n");
+	}
 }
+
+void displayMatrix(int matrix[][GRID_WIDTH], SDL_Renderer* renderer, int row, int column)
+{
+	SDL_FRect cell = { column * (CELL_SIZE_X + PADDING), row * (CELL_SIZE_Y + PADDING), CELL_SIZE_X, CELL_SIZE_Y };
+
+	if (matrix[row][column] == DEAD_CELL)
+	{
+		SDL_SetRenderDrawColor(renderer, 255, 182, 193, 255);
+	}
+	else if (matrix[row][column] == LIVE_CELL)
+	{
+		SDL_SetRenderDrawColor(renderer, 79, 115, 71, 255);
+	}
+	SDL_RenderFillRect(renderer, &cell);
+	SDL_RenderRect(renderer, &cell);
+}
+
+void RenderMatrix(SDL_Renderer* renderer, int matrix[][GRID_WIDTH])
+{
+	for (int row = 0; row < GRID_HEIGHT; ++row)
+	{
+		for (int column = 0; column < GRID_WIDTH; ++column)
+		{
+			displayMatrix(matrix, renderer, row, column);
+		}
+	}
+}
+
+void GetMousePosition(SDL_Event event, int matrix[][GRID_WIDTH])
+{
+
+	if (event.type == SDL_EVENT_MOUSE_BUTTON_DOWN)
+	{
+
+		float mouseX = -1;
+		float mouseY = -1;
+
+		SDL_GetMouseState(&mouseX, &mouseY);
+
+		printf("Raw mouse coordinates %f:%f \n", mouseX, mouseY);
+
+		int cellRow = (int)(mouseY / (CELL_SIZE_Y + PADDING));
+		int cellCol = (int)(mouseX / (CELL_SIZE_X + PADDING));
+
+		printf("Grid coordinates %d:%d \n", cellRow, cellCol);
+
+
+		if (cellCol >= 0 && cellCol < GRID_HEIGHT &&
+			cellRow >= 0 && cellRow < GRID_WIDTH)
+		{
+			matrix[cellRow][cellCol] = !matrix[cellRow][cellCol];
+
+			
+			printf("Cell placed or removed");
+		}
+		printMatrix(matrix);
+
+
+		/*printf("Raw mouse coordinates %f:%f \n", x, y);
+
+		int cellRow = (x - PADDING) / (CELL_SIZE_X + PADDING);
+		int cellCol = (y - PADDING) / (CELL_SIZE_Y + PADDING);
+
+		printf("Grid coordinates %d:%d \n", cellRow, cellCol);
+
+		}*/
+
+	}
+}
+
+void HandleKeyPress(SDL_Event event, int matrix[][GRID_WIDTH])
+{
+	if (event.type == SDL_EVENT_KEY_DOWN) 
+	{
+		if (event.key.key == SDLK_SPACE) 
+		{
+			printf("\nSimulation started");
+			GridUpdate(matrix);
+			// handle spacebar
+		}
+	}
+
+}
+
+
 
 
 int GetNextGridState(int matrix[][GRID_HEIGHT], int liveNeighbours, int row, int col)
@@ -110,88 +211,6 @@ int GetNextGridState(int matrix[][GRID_HEIGHT], int liveNeighbours, int row, int
 	return 0;
 }
 
-//
-void printMatrix(int matrix[GRID_WIDTH][GRID_HEIGHT])
-{
-	/*ONLY FOR TEST PURPOSES IN THE GAME.C FILE*/
-	printf("______________________________________________\n");
-
-	for (int row = 0; row < GRID_HEIGHT; row++) {
-		for (int column = 0; column < GRID_WIDTH; column++) {
-			printf("%d ", matrix[row][column]);
-		}
-		printf("\n");
-	}
-}
-
-void displayMatrix(int matrix[][GRID_HEIGHT], SDL_Renderer* renderer, int row, int column)
-{
-	SDL_FRect cell = { column * (CELL_SIZE_X + PADDING), row * (CELL_SIZE_Y + PADDING), CELL_SIZE_X, CELL_SIZE_Y };
-
-	if (matrix[row][column] == DEAD_CELL)
-	{
-		SDL_SetRenderDrawColor(renderer, 255, 182, 193, 255);
-	}
-	else if (matrix[row][column] == LIVE_CELL)
-	{
-		SDL_SetRenderDrawColor(renderer, 79, 115, 71, 255);
-	}
-	SDL_RenderFillRect(renderer, &cell);
-	SDL_RenderRect(renderer, &cell);
-}
-
-void RenderMatrix(SDL_Renderer* renderer, int matrix[][GRID_HEIGHT])
-{
-	for (int row = 0; row < GRID_HEIGHT; ++row)
-	{
-		for (int column = 0; column < GRID_WIDTH; ++column)
-		{
-			displayMatrix(matrix, renderer, row, column);
-		}
-	}
-}
-void GetMousePosition(SDL_Event event, int matrix[][GRID_HEIGHT])
-{
-
-	
-	if (event.type == SDL_EVENT_MOUSE_BUTTON_DOWN)
-	{
-
-
-		float mouseX = -1;
-		float mouseY = -1;
-
-		SDL_GetMouseState(&mouseX, &mouseY);
-
-		printf("Raw mouse coordinates %f:%f \n", mouseX, mouseY);
-
-
-
-		int cellRow = (int)(mouseY / (CELL_SIZE_Y + PADDING));
-		int cellCol = (int)(mouseX / (CELL_SIZE_X + PADDING));
-
-		printf("Grid coordinates %d:%d \n", cellRow, cellCol);
-
-
-		if (cellCol >= 0 && cellCol < WINDOW_HEIGHT &&
-			cellRow >= 0 && cellRow < WINDOW_WIDTH)
-		{
-			matrix[cellRow][cellCol] = !matrix[cellRow][cellCol];
-			printf("Cell placed or removed");
-		}
-
-
-		/*printf("Raw mouse coordinates %f:%f \n", x, y);
-
-		int cellRow = (x - PADDING) / (CELL_SIZE_X + PADDING);
-		int cellCol = (y - PADDING) / (CELL_SIZE_Y + PADDING);
-
-		printf("Grid coordinates %d:%d \n", cellRow, cellCol);
-
-		}*/
-
-	}
-}
 
 
 //

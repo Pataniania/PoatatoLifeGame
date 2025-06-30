@@ -29,27 +29,23 @@ typedef struct GameArray
 
 int SDLInitialization();
 
-int GridInitialization(int matrix[][GRID_HEIGHT]);
+int GridInitialization(int matrix[][GRID_WIDTH]);
 void HandleQuitEvent(SDL_Event event, bool* done);
 
-void GridUpdate(int matrix[][GRID_HEIGHT]);
+void GridUpdate(int matrix[][GRID_WIDTH]);
 
-int CountLiveNeighbors(int matrix[][GRID_HEIGHT], int row, int col);
+int CountLiveNeighbors(int matrix[][GRID_WIDTH], int row, int col);
 
-int AllocateMatrix();
+bool IsAlive(int matrix[][GRID_WIDTH], int row, int col);
+void printMatrix(int matrix[GRID_HEIGHT][GRID_WIDTH]);
 
-bool IsAlive(int matrix[][GRID_HEIGHT], int row, int col);
-void printMatrix(int matrix[GRID_WIDTH][GRID_HEIGHT]);
+void displayMatrix(int matrix[][GRID_WIDTH], SDL_Renderer* renderer, int row, int column);
 
-void displayMatrix(int matrix[][GRID_HEIGHT], SDL_Renderer* renderer, int row, int column);
+void RenderMatrix(SDL_Renderer* renderer, int matrix[][GRID_WIDTH]);
 
-void RenderMatrix(SDL_Renderer* renderer, int matrix[][GRID_HEIGHT]);
+void GetMousePosition(SDL_Event event, int matrix[][GRID_WIDTH]);
 
-void GetMousePosition(SDL_Event event, int matrix[][GRID_HEIGHT]);
-
-
-bool PointInFRect(float px, float py, SDL_FRect* rect);
-void PlacingCell(int x, int y);
+void HandleKeyPress(SDL_Event event, int matrix[][GRID_WIDTH]);
 //int placingCells(int** matrix);
 //int updateManager(int** matrix);
 //void checkForNeighbors(int** matrix);
