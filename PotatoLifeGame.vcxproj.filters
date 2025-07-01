@@ -21,6 +21,15 @@
     <ClCompile Include="Core\game.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Core\grid.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\render.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\input.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SDL3\SDL.h">
@@ -279,6 +288,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Core\game.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\grid.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\render.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\input.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\config.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -141,9 +141,16 @@
   <ItemGroup>
     <ClCompile Include="Core\game.c" />
     <ClCompile Include="Core\main.c" />
+    <ClCompile Include="Core\grid.c" />
+    <ClCompile Include="Core\input.c" />
+    <ClCompile Include="Core\render.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Core\config.h" />
     <ClInclude Include="Core\game.h" />
+    <ClInclude Include="Core\grid.h" />
+    <ClInclude Include="Core\input.h" />
+    <ClInclude Include="Core\render.h" />
     <ClInclude Include="SDL3\SDL.h" />
     <ClInclude Include="SDL3\SDL_assert.h" />
     <ClInclude Include="SDL3\SDL_asyncio.h" />
