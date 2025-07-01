@@ -23,6 +23,12 @@
 
 #define INDEX(r, c) ((r) * GRID_COLS + (c))
 
+
+typedef struct
+{
+	int row;
+	int col;
+} GridPosition;
 bool SDLInitialization();
 
 void GridInitialization(uint8_t* matrix);
@@ -34,8 +40,17 @@ void printMatrix(uint8_t* matrix);
 void displayMatrix(uint8_t* matrix, SDL_Renderer* renderer, int row, int column);
 void RenderMatrix(SDL_Renderer* renderer, uint8_t* matrix);
 void GetMousePosition(SDL_Event event, uint8_t* matrix);
+GridPosition GetMouseCoordinatesInGrid();
+bool IsWitinBound(int row, int col);
 void HandleKeyPress(SDL_Event event, uint8_t* matrix, uint8_t* previous, bool* toggleUpdate);
 int GetNextGridState(int currentCell, int liveNeighbours);
+void RenderText(SDL_Renderer* renderer, TTF_Font* font, const char* text, int x, int y);
+void PlacePatternPentomino(uint8_t* matrix);
+void PlacePatternRings(uint8_t* matrix);
+
+void PlacePatternReflector(uint8_t* matrix);
+void CleanUp();
+int GameLoop();
 
 extern SDL_Window* window;
 extern SDL_Renderer* renderer;

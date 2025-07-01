@@ -2,6 +2,7 @@
 
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
+TTF_Font* font = NULL;
 
 bool SDLInitialization()
 {
@@ -30,7 +31,8 @@ bool SDLInitialization()
 	{
 		SDL_Log("SDL_ttf could not initialize! SDL_ttf error: %s\n", SDL_GetError());
 	}
-	TTF_Font* font = TTF_OpenFont("Minecraft.ttf", 24);
+
+	font = TTF_OpenFont("Minecraft.ttf", 24);
 
 	if (!font)
 	{
@@ -38,7 +40,6 @@ bool SDLInitialization()
 	}
 	return success;
 }
-
 void GridInitialization(uint8_t* matrix)
 {
 
@@ -146,38 +147,41 @@ void RenderMatrix(SDL_Renderer* renderer, uint8_t* matrix)
 }
 void GetMousePosition(SDL_Event event, uint8_t* matrix)
 {
-
 	if (event.type == SDL_EVENT_MOUSE_BUTTON_DOWN)
 	{
+		GridPosition mousePos = GetMouseCoordinatesInGrid();
 
-		float mouseX = -1;
-		float mouseY = -1;
-
-		SDL_GetMouseState(&mouseX, &mouseY);
-
-		printf("Raw mouse coordinates %f:%f \n", mouseX, mouseY);
-
-		int cellRow = (int)(mouseY / (CELL_SIZE_Y + PADDING));
-		int cellCol = (int)(mouseX / (CELL_SIZE_X + PADDING));
-
-		printf("Grid coordinates %d:%d \n", cellRow, cellCol);
-
-
-		if (cellRow >= 0 && cellRow < GRID_ROWS &&
-			cellCol >= 0 && cellCol < GRID_COLS)
+		if (mousePos.row >= 0 && mousePos.row < GRID_ROWS &&
+			mousePos.col >= 0 && mousePos.col < GRID_COLS)
 		{
-			matrix[INDEX(cellRow, cellCol)] = !matrix[INDEX(cellRow, cellCol)];
+			matrix[INDEX(mousePos.row, mousePos.col)] = !matrix[INDEX(mousePos.row, mousePos.col)];
 		}
-		/*printf("Raw mouse coordinates %f:%f \n", x, y);
-
-		int cellRow = (x - PADDING) / (CELL_SIZE_X + PADDING);
-		int cellCol = (y - PADDING) / (CELL_SIZE_Y + PADDING);
-
-		printf("Grid coordinates %d:%d \n", cellRow, cellCol);
-
-		}*/
-
 	}
+}
+GridPosition GetMouseCoordinatesInGrid()
+{
+	int** coordinates = 0;
+	float mouseX = -1;
+	float mouseY = -1;
+
+	GridPosition pos;
+
+	SDL_GetMouseState(&mouseX, &mouseY);
+
+	pos.row = (int)(mouseY / (CELL_SIZE_Y + PADDING));
+	pos.col = (int)(mouseX / (CELL_SIZE_X + PADDING));
+
+	return pos;
+}
+bool IsWitinBound(int row, int col)
+{
+
+	if (col >= 0 && row < GRID_ROWS &&
+		col >= 0 && col < GRID_COLS)
+	{
+		return true;
+	}
+	return false;
 }
 void HandleKeyPress(SDL_Event event, uint8_t* matrix, uint8_t* previous, bool* toggleUpdate)
 {
@@ -205,7 +209,18 @@ void HandleKeyPress(SDL_Event event, uint8_t* matrix, uint8_t* previous, bool* t
 		{
 			*toggleUpdate = !(*toggleUpdate);
 		}
-
+		if (event.key.key == SDLK_A)
+		{
+			PlacePatternPentomino(matrix);
+		}
+		if (event.key.key == SDLK_Z)
+		{
+			PlacePatternRings(matrix);
+		}
+		if (event.key.key == SDLK_E)
+		{
+			PlacePatternReflector(matrix);
+		}
 	}
 }
 int GetNextGridState(int currentCell, int liveNeighbours)
@@ -218,6 +233,165 @@ int GetNextGridState(int currentCell, int liveNeighbours)
 	{
 		return (liveNeighbours == 3) ? LIVE_CELL : DEAD_CELL;
 	}
+}
+void RenderText(SDL_Renderer* renderer, TTF_Font* font, const char* text, int x, int y)
+{
+	SDL_Color color = { 255, 255, 255, 255 }; // White color
+
+	// Create surface from the text
+	SDL_Surface* surface = TTF_RenderText_Solid(font, text, strlen(text), color);
+	if (!surface) {
+		SDL_Log("Failed to create text surface: %s", SDL_GetError());
+		return;
+	}
+
+	// Create texture from surface
+	SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
+	if (!texture) {
+		SDL_Log("Failed to create text texture: %s", SDL_GetError());
+		SDL_DestroySurface(surface);
+		return;
+	}
+
+	// Setup destination rectangle for rendering the text texture
+	SDL_Rect dstRect = { x, y, surface->w, surface->h };
+
+	// Free the surface, we don't need it anymore
+	SDL_DestroySurface(surface);
+
+	// Render the texture to the renderer
+	if (SDL_RenderTexture(renderer, texture, NULL, &dstRect) != 0) {
+		SDL_Log("Failed to render text texture: %s", SDL_GetError());
+	}
+
+	// Destroy the texture after rendering
+	SDL_DestroyTexture(texture);
+}
+//For your own good don't read this
+void PlacePatternPentomino(uint8_t* matrix)
+{
+	GridPosition mousePos = GetMouseCoordinatesInGrid();
+	if (IsWitinBound(mousePos.row, mousePos.col))
+	{
+		matrix[INDEX(mousePos.row, mousePos.col)] = LIVE_CELL;
+		matrix[INDEX(mousePos.row, mousePos.col + 1)] = LIVE_CELL;
+		matrix[INDEX(mousePos.row, mousePos.col - 1)] = LIVE_CELL;
+		matrix[INDEX(mousePos.row - 1, mousePos.col + 1)] = LIVE_CELL;
+		matrix[INDEX(mousePos.row + 1, mousePos.col)] = LIVE_CELL;
+	}
+}
+void PlacePatternRings(uint8_t* matrix)
+{
+	GridPosition mousePos = GetMouseCoordinatesInGrid();
+	if (IsWitinBound(mousePos.row, mousePos.col))
+	{
+		matrix[INDEX(mousePos.row, mousePos.col + 1)] = LIVE_CELL;
+		matrix[INDEX(mousePos.row + 1, mousePos.col + 1)] = LIVE_CELL;
+		matrix[INDEX(mousePos.row - 1, mousePos.col + 1)] = LIVE_CELL;
+
+		matrix[INDEX(mousePos.row + 1, mousePos.col + 2)] = LIVE_CELL;
+		matrix[INDEX(mousePos.row - 1, mousePos.col + 2)] = LIVE_CELL;
+
+		matrix[INDEX(mousePos.row, mousePos.col + 3)] = LIVE_CELL;
+		matrix[INDEX(mousePos.row + 1, mousePos.col + 3)] = LIVE_CELL;
+		matrix[INDEX(mousePos.row - 1, mousePos.col + 3)] = LIVE_CELL;
+
+		matrix[INDEX(mousePos.row, mousePos.col - 1)] = LIVE_CELL;
+		matrix[INDEX(mousePos.row + 1, mousePos.col - 1)] = LIVE_CELL;
+		matrix[INDEX(mousePos.row - 1, mousePos.col - 1)] = LIVE_CELL;
+
+		matrix[INDEX(mousePos.row + 1, mousePos.col - 2)] = LIVE_CELL;
+		matrix[INDEX(mousePos.row - 1, mousePos.col - 2)] = LIVE_CELL;
+
+		matrix[INDEX(mousePos.row, mousePos.col - 3)] = LIVE_CELL;
+		matrix[INDEX(mousePos.row + 1, mousePos.col - 3)] = LIVE_CELL;
+		matrix[INDEX(mousePos.row - 1, mousePos.col - 3)] = LIVE_CELL;
+	}
+}
+void PlacePatternReflector(uint8_t* matrix)
+{
+	GridPosition mousePos = GetMouseCoordinatesInGrid();
+	if (IsWitinBound(mousePos.row, mousePos.col))
+	{
+		matrix[INDEX(mousePos.row, mousePos.col)] = LIVE_CELL;
+		matrix[INDEX(mousePos.row, mousePos.col + 1)] = LIVE_CELL;
+		matrix[INDEX(mousePos.row, mousePos.col + 2)] = LIVE_CELL;
+		matrix[INDEX(mousePos.row + 1, mousePos.col + 3)] = LIVE_CELL;
+		matrix[INDEX(mousePos.row - 1, mousePos.col + 3)] = LIVE_CELL;
+		matrix[INDEX(mousePos.row, mousePos.col + 4)] = LIVE_CELL;
+		matrix[INDEX(mousePos.row, mousePos.col + 5)] = LIVE_CELL;
+
+		matrix[INDEX(mousePos.row, mousePos.col - 1)] = LIVE_CELL;
+		matrix[INDEX(mousePos.row + 1, mousePos.col - 2)] = LIVE_CELL;
+		matrix[INDEX(mousePos.row - 1, mousePos.col - 2)] = LIVE_CELL;
+		matrix[INDEX(mousePos.row, mousePos.col - 3)] = LIVE_CELL;
+		matrix[INDEX(mousePos.row, mousePos.col - 4)] = LIVE_CELL;
+	}
+}
+void CleanUp()
+{
+	SDL_DestroyRenderer(renderer);
+	renderer = NULL;
+	SDL_DestroyWindow(window);
+	window = NULL;
+	TTF_CloseFont(font);
+	font = NULL;
+	TTF_Quit();
+	SDL_Quit();
+}
+int GameLoop()
+{
+	bool done = false;
+	bool toggleUpdate = false;
+
+	uint8_t* matrix = malloc(sizeof(uint8_t) * GRID_ROWS * GRID_COLS);
+	if (!matrix)
+	{
+		SDL_Log("Failed to allocate grid memory");
+		return -1;
+	}
+
+	uint8_t* previous = malloc(sizeof(uint8_t) * GRID_ROWS * GRID_COLS);
+	if (!previous)
+	{
+		SDL_Log("Failed to allocate grid memory");
+		return -1;
+	}
+
+	if (!SDLInitialization())
+	{
+		return -1;
+	}
+
+	GridInitialization(matrix);
+
+	while (!done)
+	{
+		SDL_Event event;
+
+		while (SDL_PollEvent(&event))
+		{
+			HandleQuitEvent(event, &done);
+			GetMousePosition(event, matrix);
+			HandleKeyPress(event, matrix, previous, &toggleUpdate);
+		}
+		if (toggleUpdate)
+		{
+			GridUpdate(matrix, previous);
+			SDL_Delay(100);
+		}
+		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+		SDL_RenderClear(renderer);
+		//RenderText(renderer,font, "salem", 10,10);
+		RenderMatrix(renderer, matrix);
+
+		SDL_RenderPresent(renderer);
+
+	}
+	free(matrix);
+	free(previous);
+	CleanUp();
+	
 }
 
 
