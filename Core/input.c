@@ -1,6 +1,5 @@
 #include "input.h"
 
-
 void HandleQuitEvent(SDL_Event event, bool* done)
 {
 	if (event.type == SDL_EVENT_QUIT)
@@ -9,7 +8,6 @@ void HandleQuitEvent(SDL_Event event, bool* done)
 	}
 
 }
-
 GridPosition GetMouseCoordinatesInGrid()
 {
 	int** coordinates = 0;
@@ -25,7 +23,6 @@ GridPosition GetMouseCoordinatesInGrid()
 
 	return pos;
 }
-
 void GetMousePosition(SDL_Event event, uint8_t* matrix)
 {
 	if (event.type == SDL_EVENT_MOUSE_BUTTON_DOWN)
@@ -138,4 +135,15 @@ void PlacePatternReflector(uint8_t* matrix)
 		matrix[INDEX(mousePos.row, mousePos.col - 3)] = LIVE_CELL;
 		matrix[INDEX(mousePos.row, mousePos.col - 4)] = LIVE_CELL;
 	}
+}
+
+bool IsWitinBound(int row, int col)
+{
+
+	if (col >= 0 && row < GRID_ROWS &&
+		col >= 0 && col < GRID_COLS)
+	{
+		return true;
+	}
+	return false;
 }

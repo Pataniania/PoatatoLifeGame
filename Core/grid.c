@@ -1,6 +1,5 @@
 #include "grid.h"
 
-
 void GridInitialization(uint8_t* matrix)
 {
 
@@ -14,7 +13,6 @@ void GridInitialization(uint8_t* matrix)
 }
 void GridUpdate(uint8_t* matrix, uint8_t* previous)
 {
-
 	if (!previous)
 	{
 		printf("ERROR couldn't allocate memory\n");
@@ -65,7 +63,7 @@ int GetNextGridState(int currentCell, int liveNeighbours)
 	{
 		return (liveNeighbours < 2 || liveNeighbours > 3) ? DEAD_CELL : LIVE_CELL;
 	}
-	else // currentCell == DEAD_CELL
+	else
 	{
 		return (liveNeighbours == 3) ? LIVE_CELL : DEAD_CELL;
 	}
@@ -76,15 +74,5 @@ bool IsAlive(uint8_t* matrix, int row, int col)
 	return row >= 0 && row < GRID_ROWS && col >= 0 && col < GRID_COLS && matrix[INDEX(row, col)] == LIVE_CELL;
 }
 
-bool IsWitinBound(int row, int col)
-{
-
-	if (col >= 0 && row < GRID_ROWS &&
-		col >= 0 && col < GRID_COLS)
-	{
-		return true;
-	}
-	return false;
-}
 
 

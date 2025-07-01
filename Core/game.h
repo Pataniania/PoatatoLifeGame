@@ -1,11 +1,13 @@
 #pragma once
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_render.h>
 #include <SDL3_ttf/SDL_ttf.h>
 
-#include <stdio.h>
-#include <stdlib.h>
 
 #include "config.h"
 #include "render.h"
@@ -13,8 +15,6 @@
 #include "input.h"
 
 bool SDLInitialization();
-
-void printMatrix(uint8_t* matrix);
 void CleanUp();
 int GameLoop();
 
