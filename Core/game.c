@@ -52,6 +52,33 @@ void printMatrix(uint8_t* matrix)
 		printf("\n");
 	}
 }
+
+void PrintControls()
+{
+	SDL_Log("=== Controls for Life Game ===");
+	SDL_Log("[U] Update for one generation");
+	SDL_Log("[R] Randomize 30 cells");
+	SDL_Log("[C] Clear grid");
+	SDL_Log("[SPACE] Toggle auto-update");
+	SDL_Log("[A] Place Pentomino pattern:");
+	SDL_Log("  ##");
+	SDL_Log(" ## ");
+	SDL_Log("  #");
+
+	SDL_Log("[Z] Place Rings pattern:");
+	SDL_Log(" ####     ####");
+	SDL_Log(" #  #     #  #");
+	SDL_Log(" #  #     #  #");
+	SDL_Log(" ####     ####");
+
+	SDL_Log("[E] Place Reflector pattern:");
+	SDL_Log(".. # .... # .. ");
+	SDL_Log("## . #### . ## ");
+	SDL_Log(".. # .... # .. ");
+
+	SDL_Log("==============================");
+}
+
 void CleanUp()
 {
 	SDL_DestroyRenderer(renderer);
@@ -89,6 +116,7 @@ int GameLoop()
 
 	GridInitialization(matrix);
 
+	PrintControls();
 	while (!done)
 	{
 		SDL_Event event;

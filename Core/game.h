@@ -15,6 +15,9 @@
 #include "input.h"
 
 bool SDLInitialization();
+
+void PrintControls();
+
 void CleanUp();
 int GameLoop();
 

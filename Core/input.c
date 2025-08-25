@@ -57,7 +57,6 @@ void HandleKeyPress(SDL_Event event, uint8_t* matrix, uint8_t* previous, bool* t
 		{
 			GridInitialization(matrix);
 		}
-
 		if (event.key.key == SDLK_SPACE)
 		{
 			*toggleUpdate = !(*toggleUpdate);
