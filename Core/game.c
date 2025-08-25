@@ -52,7 +52,6 @@ void printMatrix(uint8_t* matrix)
 		printf("\n");
 	}
 }
-
 void PrintControls()
 {
 	SDL_Log("=== Controls for Life Game ===");
@@ -134,7 +133,6 @@ int GameLoop()
 		}
 		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 		SDL_RenderClear(renderer);
-		//RenderText(renderer,font, "salem", 10,10);
 		RenderMatrix(renderer, matrix);
 		SDL_RenderPresent(renderer);
 
