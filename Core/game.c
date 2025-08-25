@@ -2,7 +2,6 @@
 
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
-TTF_Font* font = NULL;
 
 bool SDLInitialization()
 {
@@ -25,18 +24,6 @@ bool SDLInitialization()
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Could not create renderer: %s\n", SDL_GetError());
 		success = false;
-	}
-
-	if (TTF_Init() == false)
-	{
-		SDL_Log("SDL_ttf could not initialize! SDL_ttf error: %s\n", SDL_GetError());
-	}
-
-	font = TTF_OpenFont("Minecraft.ttf", 24);
-
-	if (!font)
-	{
-		SDL_Log("Failed to load font: %s", SDL_GetError());
 	}
 	return success;
 }
@@ -84,9 +71,6 @@ void CleanUp()
 	renderer = NULL;
 	SDL_DestroyWindow(window);
 	window = NULL;
-	TTF_CloseFont(font);
-	font = NULL;
-	TTF_Quit();
 	SDL_Quit();
 }
 int GameLoop()

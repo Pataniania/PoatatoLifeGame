@@ -12,5 +12,3 @@
 void displayMatrix(uint8_t* matrix, SDL_Renderer* renderer, int row, int column);
 
 void RenderMatrix(SDL_Renderer* renderer, uint8_t* matrix);
-
-void RenderText(SDL_Renderer* renderer, TTF_Font* font, const char* text, int x, int y);

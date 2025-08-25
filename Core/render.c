@@ -27,37 +27,3 @@ void RenderMatrix(SDL_Renderer* renderer, uint8_t* matrix)
 		}
 	}
 }
-
-void RenderText(SDL_Renderer* renderer, TTF_Font* font, const char* text, int x, int y)
-{
-	SDL_Color color = { 255, 255, 255, 255 }; // White color
-
-	// Create surface from the text
-	SDL_Surface* surface = TTF_RenderText_Solid(font, text, strlen(text), color);
-	if (!surface) {
-		SDL_Log("Failed to create text surface: %s", SDL_GetError());
-		return;
-	}
-
-	// Create texture from surface
-	SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
-	if (!texture) {
-		SDL_Log("Failed to create text texture: %s", SDL_GetError());
-		SDL_DestroySurface(surface);
-		return;
-	}
-
-	// Setup destination rectangle for rendering the text texture
-	SDL_Rect dstRect = { x, y, surface->w, surface->h };
-
-	// Free the surface, we don't need it anymore
-	SDL_DestroySurface(surface);
-
-	// Render the texture to the renderer
-	if (SDL_RenderTexture(renderer, texture, NULL, &dstRect) != 0) {
-		SDL_Log("Failed to render text texture: %s", SDL_GetError());
-	}
-
-	// Destroy the texture after rendering
-	SDL_DestroyTexture(texture);
-}
